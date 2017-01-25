@@ -4,6 +4,12 @@ from mpl_toolkits.mplot3d import Axes3D
 
 from fourier import FourierBasis
 
+'''
+Simple supervised test of fourier basis. Uses gradient descent to learn
+representation of 'peaks' function using fourier basis.
+'''
+
+
 #creating training data
 f =  lambda x,y : (3.*(1.-x)**2.*np.exp(-(x**2) - (y+1.)**2.)
     - 10.*(x/5. - x**3 - y**5)*np.exp(-x**2-y**2)
@@ -16,12 +22,13 @@ Zs = f(Xs,Ys)
 
 #fourier basis
 rep = FourierBasis(low=np.array([-3,-3.]),high=np.array([3.,3.]),
-                    order = 6)
+                    order = 10)
 print rep.coeffs
 
 #stochastic gradient descent
 theta = np.zeros(rep.n_features)
 alpha = 0.0001
+lambda_ = .0005
 for i in range(5000000):
     #pick random sample
     idx = np.random.randint(Zs.size)
@@ -31,7 +38,7 @@ for i in range(5000000):
     #get prediction
     pred = np.dot(phi,theta)
     #gradient update
-    theta -=  alpha*0.5*(pred-z)*phi
+    theta -=  alpha*rep.scaling*(pred-z)*phi
 
 #plot result
 fig = plt.figure()
