@@ -16,7 +16,7 @@ Results on MountainCar:
 
 ## Options
 
-The repo includes a number of pre-learned option policies for the pinball domain. The can be loaded
+The repo includes a number of pre-learned option policies for the pinball domain. These can be loaded
 from the options folder. Options are trained to move the ball from a starting
 region to a goal region. The options are named  'option\_[starting region]\_[goal region]'.
 Regions are defined as rectangles (xmin,ymin,xmax,ymax), i.e. opposite corners
@@ -28,7 +28,7 @@ Option policies can be loaded using the load_option function from pb_options
 
 > import pb_options as pb
 
-> option_file = '..\/options\/option\_\[ 0.  0.  1.  1.\]\_\[ 0.8  0.8  0.9  0.9\].pkl'
+> option_file = '../options/option\_\[ 0.  0.  1.  1.\]\_\[ 0.8  0.8  0.9  0.9\].pkl'
 
 > option = pb.load_option(f,0.) # second parameter makes policy egreedy
 
