@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 #SBATCH -p short
+#SBATCH --export=ALL
 #SBATCH --job-name=intra_option
 #SBATCH --output=$HOME/Code/fourier/log.txt
 #
