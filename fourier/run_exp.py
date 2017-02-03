@@ -1,5 +1,5 @@
 import pb_options as pb
-from option_models import IntraOptionQLearner
+from option_agents import IntraOptionQLearner, SMDPQLearner
 import gym
 import gym_pinball
 from fourier import FourierBasis
@@ -13,8 +13,9 @@ def run_exp(exp_id,beta_high, beta_low, alpha, beta_eps,
             gamma=.99,
             epsilon=.01,
             order=5,
-            n_steps=1000,
+            n_steps=250000,
             log_steps = 1000,
+            intra_option = True,
             log_dir='.'):
 
     option_list = ['../options/option_[ 0.  0.  1.  1.]_[ 0.1  0.8  0.2  0.9].pkl', #upper left
@@ -55,7 +56,18 @@ def run_exp(exp_id,beta_high, beta_low, alpha, beta_eps,
     low, high = env.observation_space.low, env.observation_space.high
     proj = FourierBasis(low, high, order=order)
 
-    agent = IntraOptionQLearner(#env=env,
+    if intra_option:
+        agent = IntraOptionQLearner(#env=env,
+                            proj=proj,
+                            options=options,
+                            betas=beta_fn,
+                            beta_eps = beta_eps,
+                            inits=init_fn,
+                            alpha=alpha,
+                            gamma=gamma,
+                            epsilon=epsilon)
+    else:
+        agent = SMDPQLearner(#env=env,
                             proj=proj,
                             options=options,
                             betas=beta_fn,
@@ -117,17 +129,41 @@ def run_exp(exp_id,beta_high, beta_low, alpha, beta_eps,
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-id", type=int, help="id")
-    parser.add_argument("-alpha", type=float, help="learning rate")
-    parser.add_argument("-beta1", type=float, help="beta1")
-    parser.add_argument("-beta2", type=float, help="beta2")
-    parser.add_argument("-beta_eps", type=float, help="beta bias")
-    parser.add_argument("-log", type=str, help="log dir")
+    # parser.add_argument("-alpha", type=float, help="learning rate")
+    # parser.add_argument("-beta1", type=float, help="beta1")
+    # parser.add_argument("-beta2", type=float, help="beta2")
+    # parser.add_argument("-beta_eps", type=float, help="beta bias")
+    # parser.add_argument("-log", type=str, help="log dir")
 
     args = parser.parse_args()
+    exp_id = args.id
 
-    run_exp(exp_id=args.id,
-            alpha=args.alpha,
-            beta_high=args.beta1,
-            beta_low=args.beta2,
-            beta_eps=args.beta_eps,
-            log_dir=args.log)
+
+    alphas = [.01,.005,.001,0.0005,.0001]
+    betas = [.1,.3,.5,.7,.9]
+    beta_eps = [.1,.3,.5,.7,.9]
+    n_runs = 20
+
+
+    siz =(len(alphas),len(betas),len(betas),len(beta_eps),n_runs)
+    assert 0 < exp_id < np.prod(siz), 'invalid id'
+    print np.prod(siz)
+
+    alpha_idx, beta1_idx, beta2_idx, eps_idx, run_id = np.unravel_index(exp_id, siz)
+    alpha = alphas[alpha_idx]
+    beta1 = betas[beta1_idx]
+    beta2 = betas[beta1_idx]
+    beta_eps = beta_eps[eps_idx]
+
+    log_dir = '../logs/%f/%f/%f/%f'%(beta1,beta2,beta_eps,alpha)
+
+    import os
+    if not os.path.exists(log_dir):
+		os.makedirs(log_dir)
+
+    run_exp(exp_id=run_id,
+            alpha=alpha,
+            beta_high=beta1,
+            beta_low=beta2,
+            beta_eps=beta_eps,
+            log_dir=log_dir)
