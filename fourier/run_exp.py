@@ -139,14 +139,14 @@ if __name__ == '__main__':
     exp_id = args.id
 
 
-    alphas = [.01,.005,.001,0.0005,.0001]
+    alphas = [.0001,.0005,.001,0.005,.01]
     betas = [.1,.3,.5,.7,.9]
     beta_eps = [.1,.3,.5,.7,.9]
     n_runs = 20
 
 
     siz =(len(alphas),len(betas),len(betas),len(beta_eps),n_runs)
-    assert 0 < exp_id < np.prod(siz), 'invalid id'
+    assert 0 <= exp_id < np.prod(siz), 'invalid id'
     print np.prod(siz)
 
     alpha_idx, beta1_idx, beta2_idx, eps_idx, run_id = np.unravel_index(exp_id, siz)
@@ -159,7 +159,10 @@ if __name__ == '__main__':
 
     import os
     if not os.path.exists(log_dir):
-		os.makedirs(log_dir)
+        try:
+	    os.makedirs(log_dir)
+        except (RuntimeError, OSError):
+            print 'error creating logdir'
 
     run_exp(exp_id=run_id,
             alpha=alpha,

@@ -2,11 +2,12 @@
 #
 #SBATCH -p short
 #SBATCH --export=ALL
-#SBATCH --job-name=intra_option
-#SBATCH --output=$HOME/Code/fourier/log.txt
+#SBATCH --job-name=intra_option5
+#SBATCH --output=log3.txt
 #
-#SBATCH sbatch --array=0-1
+#SBATCH --array=0-1000%100
 #SBATCH --time=60:00
 
 cd $HOME/Code/fourier/fourier
-python run_exp.py -id $SLURM_ARRAY_TASK_ID
+EXPID=$((SLURM_ARRAY_TASK_ID + 5000)) 
+python run_exp.py -id $EXPID
