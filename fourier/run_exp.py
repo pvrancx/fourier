@@ -141,21 +141,21 @@ if __name__ == '__main__':
 
     alphas = [.0001,.0005,.001,0.005,.01]
     betas = [.1,.3,.5,.7,.9]
-    beta_eps = [.1,.3,.5,.7,.9]
+    beta_eps = [0.]#[.1,.3,.5,.7,.9]
     n_runs = 20
 
 
-    siz =(len(alphas),len(betas),len(betas),len(beta_eps),n_runs)
-    assert 0 <= exp_id < np.prod(siz), 'invalid id'
+    siz =(len(alphas),len(betas),len(beta_eps),n_runs)
     print np.prod(siz)
+    assert 0 <= exp_id < np.prod(siz), 'invalid id'
 
-    alpha_idx, beta1_idx, beta2_idx, eps_idx, run_id = np.unravel_index(exp_id, siz)
+    alpha_idx, beta_idx, eps_idx, run_id = np.unravel_index(exp_id, siz)
     alpha = alphas[alpha_idx]
-    beta1 = betas[beta1_idx]
-    beta2 = betas[beta1_idx]
-    beta_eps = beta_eps[eps_idx]
+    beta1 = betas[beta_idx]
+    beta2 = betas[beta_idx]
+    beta_bias = beta_eps[eps_idx]
 
-    log_dir = '../logs/%f/%f/%f/%f'%(beta1,beta2,beta_eps,alpha)
+    log_dir = '../logs/%f/%f/%f/%f'%(beta1,beta2,beta_bias,alpha)
 
     import os
     if not os.path.exists(log_dir):
@@ -168,5 +168,5 @@ if __name__ == '__main__':
             alpha=alpha,
             beta_high=beta1,
             beta_low=beta2,
-            beta_eps=beta_eps,
+            beta_eps=beta_bias,
             log_dir=log_dir)
