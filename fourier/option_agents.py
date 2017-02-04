@@ -1,4 +1,5 @@
 import numpy as np
+import copy
 
 class LinearOptionsAgent(object):
     '''Agent that applies fixed set of linear options - no learning'''
@@ -114,19 +115,19 @@ class SMDPQLearner(OptionController):
 
     def start(self, obs):
         super(SMDPQLearner, self).start(obs)
-        self.option_pi = option_phi  # log starting phi
+        self.option_phi = copy.copy(self.phi) # log starting phi
         self.ro = 0. # start accumulating option reward
         self.gamma_k = 1. #reset option discount
         return self.act
 
     def do_learning(self, rew, phi_n, done, beta_n, opt_n):
-        if term:
+        if self.term:
             # option terminated, bootstrap
             delta = self.ro - np.dot(self.theta[:,self.option_idx], self.option_phi)
             if not done:
                 vals_n = np.dot(self.theta[:,opt_n].T,phi_n)
                 delta += self.gamma *(1. -self.beta_eps) * np.max(vals_n)
-            self.theta[:,self.option_idx] += self.alpha*delta*self.option_pi
+            self.theta[:,self.option_idx] += self.alpha*delta*self.option_phi
             self.ro = 0.
             self.gamma_k = 1.
             self.option_phi = phi_n
