@@ -123,7 +123,7 @@ def run_exp(exp_id,beta_high, beta_low, alpha, beta_eps,
 
     savefile = log_dir+'/log_'+str(exp_id)+'.pkl'
     with open(savefile,'wb') as f:
-        pickle.dump(log,f)
+        pickle.dump(log,f,-1)
 
 
 if __name__ == '__main__':
@@ -133,20 +133,23 @@ if __name__ == '__main__':
     # parser.add_argument("-beta1", type=float, help="beta1")
     # parser.add_argument("-beta2", type=float, help="beta2")
     # parser.add_argument("-beta_eps", type=float, help="beta bias")
-    # parser.add_argument("-log", type=str, help="log dir")
+    parser.add_argument("cfg", type=str, help="settings file")
 
     args = parser.parse_args()
     exp_id = args.id
 
+    import json
+    with open(args.cfg,'r') as f:
+        config = json.load(f)
 
-    alphas = [.0001,.0005,.001,0.005,.01]
-    betas = [.1,.3,.5,.7,.9]
-    beta_eps = [0.]#[.1,.3,.5,.7,.9]
-    n_runs = 20
+    alphas = config['alphas']#[.0001,.0005,.001,0.005,.01]
+    betas = config['betas'] #[.1,.3,.5,.7,.9]
+    beta_eps = config['biases']#[.1,.3,.5,.7,.9]
+    n_runs = config['runs']
 
 
     siz =(len(alphas),len(betas),len(beta_eps),n_runs)
-    print np.prod(siz)
+    print 'valid configs:' +str(np.prod(siz))
     assert 0 <= exp_id < np.prod(siz), 'invalid id'
 
     alpha_idx, beta_idx, eps_idx, run_id = np.unravel_index(exp_id, siz)
@@ -160,7 +163,7 @@ if __name__ == '__main__':
     import os
     if not os.path.exists(log_dir):
         try:
-	    os.makedirs(log_dir)
+            os.makedirs(log_dir)
         except (RuntimeError, OSError):
             print 'error creating logdir'
 
