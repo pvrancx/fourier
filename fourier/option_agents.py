@@ -122,12 +122,13 @@ class SMDPQLearner(OptionController):
         return self.act
 
     def do_learning(self, rew, phi_n, done, beta_n, opt_n):
+        beta = beta_n[self.option_idx] # termination prob of current option
         if self.term:
             # option terminated, bootstrap
             delta = self.ro - np.dot(self.theta[:,self.option_idx], self.option_phi)
             if not done:
                 vals_n = np.dot(self.theta[:,opt_n].T,phi_n)
-                delta += self.gamma *self.gamma_k*(1. -self.beta_eps)* beta_n * np.max(vals_n)
+                delta += self.gamma *self.gamma_k*(1. -self.beta_eps)* beta * np.max(vals_n)
             self.theta[:,self.option_idx] += self.alpha*delta*self.option_phi
             self.ro = 0.
             self.gamma_k = 1.
@@ -137,7 +138,7 @@ class SMDPQLearner(OptionController):
             # option continues, accumulate reward
             self.ro += self.gamma_k * rew * self.beta_prod
             self.gamma_k *= self.gamma
-            self.beta_prod *= (1.-beta_n)
+            self.beta_prod *= (1.-beta)
 
 class IntraOptionQLearner(OptionController):
     '''Model free linear intra option learner'''
