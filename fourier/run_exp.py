@@ -15,7 +15,7 @@ def run_exp(exp_id,beta_high, beta_low, alpha, beta_eps,
             order=5,
             n_steps=250000,
             log_steps = 1000,
-            intra_option = True,
+            intra_option = False,
             log_dir='.'):
 
     option_list = ['../options/option_[ 0.  0.  1.  1.]_[ 0.1  0.8  0.2  0.9].pkl', #upper left
@@ -67,6 +67,7 @@ def run_exp(exp_id,beta_high, beta_low, alpha, beta_eps,
                             gamma=gamma,
                             epsilon=epsilon)
     else:
+        print 'smdp'
         agent = SMDPQLearner(#env=env,
                             proj=proj,
                             options=options,
@@ -158,7 +159,7 @@ if __name__ == '__main__':
     beta2 = betas[beta_idx]
     beta_bias = beta_eps[eps_idx]
 
-    log_dir = '../logs/%f/%f/%f/%f'%(beta1,beta2,beta_bias,alpha)
+    log_dir = '../logs/smdp/%f/%f/%f/%f'%(beta1,beta2,beta_bias,alpha)
 
     import os
     if not os.path.exists(log_dir):
