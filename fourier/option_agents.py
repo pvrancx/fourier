@@ -126,7 +126,7 @@ class SMDPQLearner(OptionController):
             delta = self.ro - np.dot(self.theta[:,self.option_idx], self.option_phi)
             if not done:
                 vals_n = np.dot(self.theta[:,opt_n].T,phi_n)
-                delta += self.gamma *(1. -self.beta_eps) * np.max(vals_n)
+                delta += self.gamma *self.gamma_k*(1. -self.beta_eps) * np.max(vals_n)
             self.theta[:,self.option_idx] += self.alpha*delta*self.option_phi
             self.ro = 0.
             self.gamma_k = 1.
