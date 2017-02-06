@@ -144,22 +144,25 @@ if __name__ == '__main__':
         config = json.load(f)
 
     alphas = config['alphas']#[.0001,.0005,.001,0.005,.01]
+    gammas = config['gammas']
     betas = config['betas'] #[.1,.3,.5,.7,.9]
     beta_eps = config['biases']#[.1,.3,.5,.7,.9]
     n_runs = config['runs']
+    intra_option = bool(config['intra_option'])
 
 
-    siz =(len(alphas),len(betas),len(beta_eps),n_runs)
+    siz =(len(alphas),len(gammas),len(betas),len(beta_eps),n_runs)
     print 'valid configs:' +str(np.prod(siz))
     assert 0 <= exp_id < np.prod(siz), 'invalid id'
 
-    alpha_idx, beta_idx, eps_idx, run_id = np.unravel_index(exp_id, siz)
+    alpha_idx, gamma_idx, beta_idx, eps_idx, run_id = np.unravel_index(exp_id, siz)
     alpha = alphas[alpha_idx]
+    gamma = gammas[gamma_idx]
     beta1 = betas[beta_idx]
     beta2 = betas[beta_idx]
     beta_bias = beta_eps[eps_idx]
 
-    log_dir = '../logs/smdp/%f/%f/%f/%f'%(beta1,beta2,beta_bias,alpha)
+    log_dir = '../logs/smdp/%f/%f/%f/%f/%f'%(beta1,beta2,beta_bias,alpha,gamma)
 
     import os
     if not os.path.exists(log_dir):
@@ -170,7 +173,9 @@ if __name__ == '__main__':
 
     run_exp(exp_id=run_id,
             alpha=alpha,
+            gamma=gamma,
             beta_high=beta1,
             beta_low=beta2,
             beta_eps=beta_bias,
+            intra_option=intra_option,
             log_dir=log_dir)
