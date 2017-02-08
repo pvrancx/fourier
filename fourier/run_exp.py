@@ -164,7 +164,7 @@ if __name__ == '__main__':
     beta2 = betas[beta_idx]
     beta_bias = beta_eps[eps_idx]
 
-    log_dir = '../logs/'+prefix+'/%f/%f/%f/%f/%f'%(beta1,beta2,beta_bias,alpha,gamma)
+    log_dir = '../logs/'+log_prefix+'/%f/%f/%f/%f/%f'%(beta1,beta2,beta_bias,alpha,gamma)
 
     import os
     if not os.path.exists(log_dir):
