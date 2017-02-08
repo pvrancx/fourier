@@ -149,6 +149,8 @@ if __name__ == '__main__':
     beta_eps = config['biases']#[.1,.3,.5,.7,.9]
     n_runs = config['runs']
     intra_option = bool(config['intra_option'])
+    log_prefix = config['prefix']
+
 
 
     siz =(len(alphas),len(gammas),len(betas),len(beta_eps),n_runs)
@@ -158,11 +160,11 @@ if __name__ == '__main__':
     alpha_idx, gamma_idx, beta_idx, eps_idx, run_id = np.unravel_index(exp_id, siz)
     alpha = alphas[alpha_idx]
     gamma = gammas[gamma_idx]
-    beta1 = betas[beta_idx]
+    beta1 = .99
     beta2 = betas[beta_idx]
     beta_bias = beta_eps[eps_idx]
 
-    log_dir = '../logs/smdp/%f/%f/%f/%f/%f'%(beta1,beta2,beta_bias,alpha,gamma)
+    log_dir = '../logs/'+prefix+'/%f/%f/%f/%f/%f'%(beta1,beta2,beta_bias,alpha,gamma)
 
     import os
     if not os.path.exists(log_dir):

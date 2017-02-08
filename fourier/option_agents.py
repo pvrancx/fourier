@@ -136,7 +136,7 @@ class SMDPQLearner(OptionController):
             self.beta_prod = 1.
         else:
             # option continues, accumulate reward
-            self.ro += self.gamma_k * rew * self.beta_prod
+            self.ro += self.gamma_k * rew
             self.gamma_k *= self.gamma
             self.beta_prod *= (1.-beta)
 
