@@ -163,7 +163,9 @@ class IntraOptionQLearner(OptionController):
         for idx in self.opts:
             delta = rew-vals[idx]
             if not done:
-                U = (1.- beta_n[idx])*vals_n[idx] + (1.-self.beta_eps)*beta_n[idx]*max_val_n
+                #U = (1.- beta_n[idx])*vals_n[idx] + (1.-self.beta_eps)*beta_n[idx]*max_val_n
+                eps = min(self.beta_eps, beta_n[idx])
+                U = (1.- beta_n[idx])*vals_n[idx] + (beta_n[idx]-eps)*max_val_n
                 delta += self.gamma*U
             self.theta[:,idx] += self.alpha*delta*phi
 
